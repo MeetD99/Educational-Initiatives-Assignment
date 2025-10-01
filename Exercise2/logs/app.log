@@ -1,0 +1,7 @@
+[2025-10-01T15:25:01.678Z] [INFO] CLI started
+[2025-10-01T15:25:09.874Z] [COMMAND] rotate South {"name":"rotate","args":["South"]}
+[2025-10-01T15:25:09.875Z] [INFO] Handler start {"name":"rotate","args":["South"]}
+[2025-10-01T15:25:09.875Z] [INFO] Handler success {"name":"rotate"}
+[2025-10-01T15:25:42.185Z] [COMMAND] activatePanels {"name":"activatepanels","args":[]}
+[2025-10-01T15:25:42.186Z] [INFO] Handler start {"name":"activatepanels","args":[]}
+[2025-10-01T15:25:42.187Z] [INFO] Handler success {"name":"activatepanels"}

@@ -10,6 +10,7 @@ import {
     StatusCommand 
 } from './Commands'; 
 import { CommandName, Orientation } from './types'; 
+import { Logger } from './Logger';
 
 // Mapping command strings to expected classes/logic
 const COMMAND_MAP: Record<CommandName, (satellite: Satellite, args: string[]) => void> = {
@@ -51,11 +52,13 @@ function displayHelp(): void {
  * Main function to start the interactive CLI.
  */
 async function main() {
+    const logger = Logger.getInstance();
     const satellite = new Satellite();
     // Using a simple readline interface compatible with CJS
     const rl = readline.createInterface({ input, output });
 
     console.log("\n Satellite Command System CLI Started. Type 'help' to see commands.");
+    logger.info('CLI started');
     new StatusCommand(satellite).execute();
 
     // Main interaction loop
@@ -77,8 +80,11 @@ async function main() {
         const commandName = parts[0]!.toLowerCase() as CommandName;
         const args = parts.slice(1);
 
+        logger.command(trimmedInput, { name: commandName, args });
+
         if (commandName === 'exit') {
             rl.close();
+            logger.info('Exiting CLI');
             COMMAND_MAP['exit'](satellite, []);
             break; 
         }
@@ -87,9 +93,17 @@ async function main() {
 
         if (handler) {
             console.log(`\n[Executing: ${commandName}]`);
-            handler(satellite, args);
+            logger.info('Handler start', { name: commandName, args });
+            try {
+                handler(satellite, args);
+                logger.info('Handler success', { name: commandName });
+            } catch (err) {
+                logger.error('Handler error', { name: commandName, error: (err as Error).message });
+            }
         } else {
-            console.error(`\n Unknown command: '${commandName}'. Type 'help' for a list of commands.`);
+            const msg = `\n Unknown command: '${commandName}'. Type 'help' for a list of commands.`;
+            console.error(msg);
+            logger.warn('Unknown command', { raw: trimmedInput, name: commandName });
         }
     }
 }
